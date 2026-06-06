@@ -28,12 +28,25 @@ class TurnoService {
       ...options,
     });
 
+    // 1. Parseamos el JSON de forma segura al inicio (si es que hay contenido)
+    const isNoContent = response.status === 204;
+    const data = isNoContent ? {} : await response.json().catch(() => ({}));
+
+    // 2. Si la respuesta no es exitosa, procesamos el objeto 'data' que ya tenemos
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+      if (data.errors && Array.isArray(data.errors)) {
+        const mensajeCombinado = data.errors
+          .map((err: { campo: string; mensaje: string }) => `${err.campo}: ${err.mensaje}`)
+          .join(', ');
+        
+        throw new Error(mensajeCombinado);
+      }
+
+      throw new Error(data.error || `Error ${response.status}: ${response.statusText}`);
     }
 
-    return response.json();
+    // 3. Si todo salió bien, devolvemos la data parseada
+    return data as T;
   }
 
   async getAll(): Promise<Turno[]> {

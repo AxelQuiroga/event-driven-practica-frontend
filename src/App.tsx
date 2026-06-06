@@ -11,7 +11,8 @@ import type { Turno } from './services/turnoService';
 
 const App: React.FC = () => {
   const [turnos, setTurnos] = useState<Turno[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoadingList, setIsLoadingList] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Conectar al SSE del backend para recibir eventos en tiempo real
@@ -33,7 +34,7 @@ const App: React.FC = () => {
   });
 
   const fetchTurnos = useCallback(async () => {
-    setLoading(true);
+    setIsLoadingList(true);
     setError(null);
     try {
       const data = await turnoService.getAll();
@@ -42,7 +43,7 @@ const App: React.FC = () => {
       setError(err.message || 'No se pudo cargar la lista de turnos');
       showToast('error', 'Error al cargar los turnos');
     } finally {
-      setLoading(false);
+      setIsLoadingList(false);
     }
   }, []);
 
@@ -53,6 +54,7 @@ const App: React.FC = () => {
   const handleCreateTurno = useCallback(
     async (data: { nombre: string; servicio: string; fecha: string; hora: string }) => {
       setError(null);
+      setIsCreating(true);
       try {
         const nuevoTurno = await turnoService.create(data);
         // Agregar optimistamente a la lista con check de duplicado
@@ -67,6 +69,8 @@ const App: React.FC = () => {
       } catch (err: any) {
         showToast('error', err.message || 'Error al crear el turno');
         throw err; // Para que el form sepa que falló
+      } finally {
+        setIsCreating(false);
       }
     },
     [],
@@ -94,11 +98,11 @@ const App: React.FC = () => {
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 py-6">
-        <TurnoForm onSubmit={handleCreateTurno} isLoading={loading} />
+        <TurnoForm onSubmit={handleCreateTurno} isLoading={isCreating} />
 
         <TurnoList
           turnos={turnos}
-          loading={loading}
+          loading={isLoadingList}
           error={error}
           fetchTurnos={fetchTurnos}
           deleteTurno={handleDeleteTurno}
