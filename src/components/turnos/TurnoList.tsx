@@ -1,5 +1,4 @@
 import { useState, useMemo, useCallback } from 'react';
-import { eventBus } from '../../lib/eventBus';
 import { showToast } from '../ui/Toast';
 import { Modal } from '../ui/Modal';
 import { EmptyState } from '../ui/EmptyState';
@@ -7,7 +6,7 @@ import { ErrorState } from '../ui/ErrorState';
 import { TurnoSkeleton } from '../ui/Skeleton';
 import { TurnoCard } from './TurnoCard';
 import { TurnoFilters, type SortField, type SortDirection } from './TurnoFilters';
-import type { Turno } from '../../services/turnoService';
+import type { Turno, TurnoEstado } from '../../services/turnoService';
 
 interface TurnoListProps {
   turnos: Turno[];
@@ -15,9 +14,10 @@ interface TurnoListProps {
   error: string | null;
   fetchTurnos: () => Promise<void>;
   deleteTurno: (id: number) => Promise<void>;
+  updateEstado: (id: number, estado: TurnoEstado) => Promise<void>;
 }
 
-export function TurnoList({ turnos, loading, error, fetchTurnos, deleteTurno }: TurnoListProps) {
+export function TurnoList({ turnos, loading, error, fetchTurnos, deleteTurno, updateEstado }: TurnoListProps) {
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -30,15 +30,15 @@ export function TurnoList({ turnos, loading, error, fetchTurnos, deleteTurno }: 
   const filteredAndSorted = useMemo(() => {
     let result = [...turnos];
 
-    // Filtro por búsqueda (nombre)
+    // Filtro por búsqueda (nombre del cliente)
     if (search.trim()) {
       const q = search.toLowerCase();
-      result = result.filter((t) => t.nombre.toLowerCase().includes(q));
+      result = result.filter((t) => t.cliente_nombre.toLowerCase().includes(q));
     }
 
     // Filtro por servicio
     if (serviceFilter) {
-      result = result.filter((t) => t.servicio === serviceFilter);
+      result = result.filter((t) => t.servicio_nombre === serviceFilter);
     }
 
     // Ordenamiento
@@ -48,11 +48,11 @@ export function TurnoList({ turnos, loading, error, fetchTurnos, deleteTurno }: 
         case 'fecha':
           cmp = `${a.fecha} ${a.hora}`.localeCompare(`${b.fecha} ${b.hora}`);
           break;
-        case 'nombre':
-          cmp = a.nombre.localeCompare(b.nombre);
+        case 'cliente':
+          cmp = a.cliente_nombre.localeCompare(b.cliente_nombre);
           break;
         case 'servicio':
-          cmp = a.servicio.localeCompare(b.servicio);
+          cmp = a.servicio_nombre.localeCompare(b.servicio_nombre);
           break;
       }
       return sortDirection === 'asc' ? cmp : -cmp;
@@ -76,6 +76,16 @@ export function TurnoList({ turnos, loading, error, fetchTurnos, deleteTurno }: 
       showToast('error', err.message || 'Error al eliminar el turno');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleEstadoChange = async (id: number, estado: TurnoEstado) => {
+    try {
+      await updateEstado(id, estado);
+      const label = estado === 'completed' ? 'completado' : 'cancelado';
+      showToast('success', `Turno ${label}`);
+    } catch (err: any) {
+      showToast('error', err.message || 'Error al cambiar estado');
     }
   };
 
@@ -107,7 +117,7 @@ export function TurnoList({ turnos, loading, error, fetchTurnos, deleteTurno }: 
                   setSortDirection('asc');
                 }
               }}
-              servicios={[...new Set(turnos.map((t) => t.servicio))]}
+              servicios={[...new Set(turnos.map((t) => t.servicio_nombre))]}
             />
           )}
         </div>
@@ -122,8 +132,7 @@ export function TurnoList({ turnos, loading, error, fetchTurnos, deleteTurno }: 
           ) : (
             <EmptyState
               title="Sin resultados"
-              message={`No se encontraron turnos${search ? ` para "${search}"` : ''}${serviceFilter ? ` con servicio "${serviceFilter}"` : ''}.`
-              }
+              message={`No se encontraron turnos${search ? ` para "${search}"` : ''}${serviceFilter ? ` con servicio "${serviceFilter}"` : ''}.`}
               icon="🔍"
             />
           )
@@ -134,6 +143,7 @@ export function TurnoList({ turnos, loading, error, fetchTurnos, deleteTurno }: 
                 key={turno.id}
                 turno={turno}
                 onDelete={handleDeleteClick}
+                onEstadoChange={handleEstadoChange}
               />
             ))}
           </ul>

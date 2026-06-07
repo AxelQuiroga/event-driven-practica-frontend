@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { eventBus } from './lib/eventBus';
-import { turnoService } from './services/turnoService';
+import { api, type Turno, type TurnoEstado } from './services/turnoService';
 import { useSSE } from './hooks/useSSE';
 import { useEventBus } from './hooks/useEventBus';
 import { showToast } from './components/ui/Toast';
 import { Header } from './components/layout/Header';
 import { TurnoForm } from './components/turnos/TurnoForm';
 import { TurnoList } from './components/turnos/TurnoList';
-import type { Turno } from './services/turnoService';
 
 const App: React.FC = () => {
   const [turnos, setTurnos] = useState<Turno[]>([]);
@@ -21,11 +19,10 @@ const App: React.FC = () => {
   // Escuchar eventos SSE re-publicados en el eventBus local
   useEventBus('sse:turnoCreado', (turno: Turno) => {
     setTurnos((prev) => {
-      // Evitar duplicados por si el mismo usuario creó el turno
       if (prev.some((t) => t.id === turno.id)) return prev;
       return [turno, ...prev];
     });
-    showToast('info', `Nuevo turno: ${turno.nombre} - ${turno.servicio}`);
+    showToast('info', `Nuevo turno: ${turno.cliente_nombre} - ${turno.servicio_nombre}`);
   });
 
   useEventBus('sse:turnoEliminado', (data: { id: number }) => {
@@ -37,7 +34,7 @@ const App: React.FC = () => {
     setIsLoadingList(true);
     setError(null);
     try {
-      const data = await turnoService.getAll();
+      const data = await api.getTurnos();
       setTurnos(data);
     } catch (err: any) {
       setError(err.message || 'No se pudo cargar la lista de turnos');
@@ -52,23 +49,19 @@ const App: React.FC = () => {
   }, [fetchTurnos]);
 
   const handleCreateTurno = useCallback(
-    async (data: { nombre: string; servicio: string; fecha: string; hora: string }) => {
+    async (data: { cliente_id: number; servicio_id: number; fecha: string; hora: string; notas?: string }) => {
       setError(null);
       setIsCreating(true);
       try {
-        const nuevoTurno = await turnoService.create(data);
-        // Agregar optimistamente a la lista con check de duplicado
-        // (el SSE puede haberlo agregado primero porque viaja más rápido)
+        const nuevoTurno = await api.createTurno(data);
         setTurnos((prev) => {
           if (prev.some((t) => t.id === nuevoTurno.id)) return prev;
           return [nuevoTurno, ...prev];
         });
-        showToast('success', `Turno de ${data.nombre} creado con éxito`);
-        // Publicar en eventBus local para que otros componentes reaccionen
-        eventBus.publish('turnoCreado', nuevoTurno);
+        showToast('success', 'Turno creado con éxito');
       } catch (err: any) {
         showToast('error', err.message || 'Error al crear el turno');
-        throw err; // Para que el form sepa que falló
+        throw err;
       } finally {
         setIsCreating(false);
       }
@@ -80,14 +73,25 @@ const App: React.FC = () => {
     async (id: number) => {
       setError(null);
       try {
-        await turnoService.delete(id);
-        // Remover optimistamente de la lista
+        await api.deleteTurno(id);
         setTurnos((prev) => prev.filter((t) => t.id !== id));
-        // Publicar en eventBus local
-        eventBus.publish('turnoEliminado', { id });
       } catch (err: any) {
         showToast('error', err.message || 'Error al eliminar el turno');
-        throw err; // Para que el modal sepa que falló
+        throw err;
+      }
+    },
+    [],
+  );
+
+  const handleUpdateEstado = useCallback(
+    async (id: number, estado: TurnoEstado) => {
+      setError(null);
+      try {
+        const actualizado = await api.updateTurnoEstado(id, estado);
+        setTurnos((prev) => prev.map((t) => (t.id === id ? actualizado : t)));
+      } catch (err: any) {
+        showToast('error', err.message || 'Error al cambiar estado');
+        throw err;
       }
     },
     [],
@@ -106,6 +110,7 @@ const App: React.FC = () => {
           error={error}
           fetchTurnos={fetchTurnos}
           deleteTurno={handleDeleteTurno}
+          updateEstado={handleUpdateEstado}
         />
       </main>
     </div>

@@ -1,4 +1,4 @@
-export type SortField = 'fecha' | 'nombre' | 'servicio';
+export type SortField = 'fecha' | 'cliente' | 'servicio';
 export type SortDirection = 'asc' | 'desc';
 
 interface TurnoFiltersProps {
@@ -14,7 +14,7 @@ interface TurnoFiltersProps {
 
 const sortOptions: { field: SortField; label: string }[] = [
   { field: 'fecha', label: 'Fecha' },
-  { field: 'nombre', label: 'Nombre' },
+  { field: 'cliente', label: 'Cliente' },
   { field: 'servicio', label: 'Servicio' },
 ];
 
@@ -49,7 +49,7 @@ export function TurnoFilters({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Buscar por nombre..."
+          placeholder="Buscar por cliente..."
           className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-colors"
         />
       </div>
