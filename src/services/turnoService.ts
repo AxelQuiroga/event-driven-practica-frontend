@@ -63,6 +63,12 @@ export interface CreateClienteDTO {
 
 // ─── Service ──────────────────────────────────────────────
 
+export interface CapacidadSlot {
+  hora: string;
+  ocupados: number;
+  total: number;
+}
+
 const BASE_URL = '/api';
 
 class ApiService {
@@ -93,6 +99,10 @@ class ApiService {
   async getTurnos(fecha?: string): Promise<Turno[]> {
     const query = fecha ? `?fecha=${fecha}` : '';
     return this.request<Turno[]>(`/turnos${query}`);
+  }
+
+  async getCapacidad(fecha: string): Promise<CapacidadSlot[]> {
+    return this.request<CapacidadSlot[]>(`/turnos/capacidad?fecha=${fecha}`);
   }
 
   async getTurnoById(id: number): Promise<Turno> {

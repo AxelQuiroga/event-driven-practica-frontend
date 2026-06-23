@@ -1,118 +1,181 @@
 import { useState, useEffect, useCallback } from 'react';
-import { api, type Turno, type TurnoEstado } from './services/turnoService';
+import { api, type Turno, type TurnoEstado, type CapacidadSlot } from './services/turnoService';
 import { useSSE } from './hooks/useSSE';
 import { useEventBus } from './hooks/useEventBus';
 import { showToast } from './components/ui/Toast';
 import { Header } from './components/layout/Header';
-import { TurnoForm } from './components/turnos/TurnoForm';
-import { TurnoList } from './components/turnos/TurnoList';
+import { DaySelector } from './components/turnos/DaySelector';
+import { CapacityView } from './components/turnos/CapacityView';
+import { QuickTurnoForm } from './components/turnos/QuickTurnoForm';
+import { TurnoCard } from './components/turnos/TurnoCard';
+import { EmptyState } from './components/ui/EmptyState';
+import { ErrorState } from './components/ui/ErrorState';
+
+function getToday(): string {
+  return new Date().toISOString().split('T')[0];
+}
 
 const App: React.FC = () => {
+  const [selectedDate, setSelectedDate] = useState(getToday());
   const [turnos, setTurnos] = useState<Turno[]>([]);
-  const [isLoadingList, setIsLoadingList] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+  const [capacidad, setCapacidad] = useState<CapacidadSlot[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Conectar al SSE del backend para recibir eventos en tiempo real
+  // Quick form state
+  const [quickFormOpen, setQuickFormOpen] = useState(false);
+  const [quickFormHora, setQuickFormHora] = useState('');
+
+  // SSE
   useSSE();
 
-  // Escuchar eventos SSE re-publicados en el eventBus local
   useEventBus('sse:turnoCreado', (turno: Turno) => {
-    setTurnos((prev) => {
-      if (prev.some((t) => t.id === turno.id)) return prev;
-      return [turno, ...prev];
-    });
-    showToast('info', `Nuevo turno: ${turno.cliente_nombre} - ${turno.servicio_nombre}`);
+    if (turno.fecha === selectedDate) {
+      setTurnos((prev) => {
+        if (prev.some((t) => t.id === turno.id)) return prev;
+        return [...prev, turno];
+      });
+      fetchCapacidad(selectedDate);
+    }
+    showToast('info', `${turno.cliente_nombre} - ${turno.servicio_nombre}`);
   });
 
   useEventBus('sse:turnoEliminado', (data: { id: number }) => {
     setTurnos((prev) => prev.filter((t) => t.id !== data.id));
-    showToast('info', 'Un turno fue eliminado por otro usuario');
+    fetchCapacidad(selectedDate);
   });
 
-  const fetchTurnos = useCallback(async () => {
-    setIsLoadingList(true);
+  // Fetch turnos del día
+  const fetchTurnos = useCallback(async (fecha: string) => {
+    setIsLoading(true);
     setError(null);
     try {
-      const data = await api.getTurnos();
+      const data = await api.getTurnos(fecha);
       setTurnos(data);
     } catch (err: any) {
-      setError(err.message || 'No se pudo cargar la lista de turnos');
-      showToast('error', 'Error al cargar los turnos');
+      setError(err.message || 'Error al cargar turnos');
+      showToast('error', 'Error al cargar turnos');
     } finally {
-      setIsLoadingList(false);
+      setIsLoading(false);
     }
   }, []);
 
+  // Fetch capacidad del día
+  const fetchCapacidad = useCallback(async (fecha: string) => {
+    try {
+      const data = await api.getCapacidad(fecha);
+      setCapacidad(data);
+    } catch (err) {
+      console.error('Error fetching capacidad:', err);
+    }
+  }, []);
+
+  // Cargar cuando cambia la fecha
   useEffect(() => {
-    fetchTurnos();
-  }, [fetchTurnos]);
+    fetchTurnos(selectedDate);
+    fetchCapacidad(selectedDate);
+  }, [selectedDate, fetchTurnos, fetchCapacidad]);
 
-  const handleCreateTurno = useCallback(
+  // Abrir quick form
+  const handleAgendar = useCallback((hora: string) => {
+    setQuickFormHora(hora);
+    setQuickFormOpen(true);
+  }, []);
+
+  // Crear turno desde quick form
+  const handleQuickSubmit = useCallback(
     async (data: { cliente_id: number; servicio_id: number; fecha: string; hora: string; notas?: string }) => {
-      setError(null);
-      setIsCreating(true);
-      try {
-        const nuevoTurno = await api.createTurno(data);
-        setTurnos((prev) => {
-          if (prev.some((t) => t.id === nuevoTurno.id)) return prev;
-          return [nuevoTurno, ...prev];
-        });
-        showToast('success', 'Turno creado con éxito');
-      } catch (err: any) {
-        showToast('error', err.message || 'Error al crear el turno');
-        throw err;
-      } finally {
-        setIsCreating(false);
-      }
+      const nuevoTurno = await api.createTurno(data);
+      setTurnos((prev) => [...prev, nuevoTurno]);
+      fetchCapacidad(selectedDate);
+      showToast('success', 'Turno agendado');
     },
-    [],
+    [selectedDate, fetchCapacidad],
   );
 
-  const handleDeleteTurno = useCallback(
-    async (id: number) => {
-      setError(null);
-      try {
-        await api.deleteTurno(id);
-        setTurnos((prev) => prev.filter((t) => t.id !== id));
-      } catch (err: any) {
-        showToast('error', err.message || 'Error al eliminar el turno');
-        throw err;
-      }
-    },
-    [],
-  );
-
-  const handleUpdateEstado = useCallback(
+  // Cambiar estado
+  const handleEstadoChange = useCallback(
     async (id: number, estado: TurnoEstado) => {
-      setError(null);
-      try {
-        const actualizado = await api.updateTurnoEstado(id, estado);
-        setTurnos((prev) => prev.map((t) => (t.id === id ? actualizado : t)));
-      } catch (err: any) {
-        showToast('error', err.message || 'Error al cambiar estado');
-        throw err;
-      }
+      const actualizado = await api.updateTurnoEstado(id, estado);
+      setTurnos((prev) => prev.map((t) => (t.id === id ? actualizado : t)));
+      fetchCapacidad(selectedDate);
+      const label = estado === 'completed' ? 'completado' : 'cancelado';
+      showToast('success', `Turno ${label}`);
     },
-    [],
+    [selectedDate, fetchCapacidad],
+  );
+
+  // Eliminar
+  const handleDelete = useCallback(
+    async (id: number) => {
+      await api.deleteTurno(id);
+      setTurnos((prev) => prev.filter((t) => t.id !== id));
+      fetchCapacidad(selectedDate);
+      showToast('success', 'Turno eliminado');
+    },
+    [selectedDate, fetchCapacidad],
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-black">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 py-6">
-        <TurnoForm onSubmit={handleCreateTurno} isLoading={isCreating} />
+      <main className="max-w-3xl mx-auto px-4 py-6">
+        {/* Selector de día */}
+        <div className="mb-6">
+          <DaySelector selectedDate={selectedDate} onDateChange={setSelectedDate} />
+        </div>
 
-        <TurnoList
-          turnos={turnos}
-          loading={isLoadingList}
-          error={error}
-          fetchTurnos={fetchTurnos}
-          deleteTurno={handleDeleteTurno}
-          updateEstado={handleUpdateEstado}
+        {/* Capacidad */}
+        <CapacityView
+          slots={capacidad}
+          onAgendar={handleAgendar}
+          loading={isLoading && capacidad.length === 0}
         />
+
+        {/* Turnos del día */}
+        <div>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">
+            Turnos del día ({turnos.length})
+          </h3>
+
+          {error ? (
+            <ErrorState message={error} onRetry={() => fetchTurnos(selectedDate)} />
+          ) : isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-28 bg-zinc-900 rounded-xl animate-pulse border border-zinc-800" />
+              ))}
+            </div>
+          ) : turnos.length === 0 ? (
+            <EmptyState
+              title="Sin turnos"
+              message="No hay turnos para este día"
+              icon="📅"
+            />
+          ) : (
+            turnos
+              .sort((a, b) => a.hora.localeCompare(b.hora))
+              .map((turno) => (
+                <TurnoCard
+                  key={turno.id}
+                  turno={turno}
+                  onDelete={handleDelete}
+                  onEstadoChange={handleEstadoChange}
+                />
+              ))
+          )}
+        </div>
       </main>
+
+      {/* Quick form modal */}
+      <QuickTurnoForm
+        hora={quickFormHora}
+        fecha={selectedDate}
+        isOpen={quickFormOpen}
+        onClose={() => setQuickFormOpen(false)}
+        onSubmit={handleQuickSubmit}
+      />
     </div>
   );
 };
