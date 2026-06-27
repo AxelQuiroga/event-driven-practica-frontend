@@ -60,13 +60,16 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Fetch capacidad del día
+  // Fetch capacidad del día — retorna los datos para poder await desde afuera
   const fetchCapacidad = useCallback(async (fecha: string) => {
     try {
       const data = await api.getCapacidad(fecha);
       setCapacidad(data);
+      return data;
     } catch (err) {
-      console.error('Error fetching capacidad:', err);
+      console.error('[Capacidad] Error al obtener disponibilidad:', err);
+      // No relanzamos: que falle la capacidad no debe romper el flujo principal
+      return null;
     }
   }, []);
 
@@ -82,13 +85,14 @@ const App: React.FC = () => {
     setQuickFormOpen(true);
   }, []);
 
-  // Crear turno desde quick form
+  // Crear turno desde quick form — con await en capacidad
   const handleQuickSubmit = useCallback(
     async (data: { cliente_id: number; servicio_id: number; fecha: string; hora: string; notas?: string }) => {
       const nuevoTurno = await api.createTurno(data);
       setTurnos((prev) => [...prev, nuevoTurno]);
-      fetchCapacidad(selectedDate);
-      showToast('success', 'Turno agendado');
+      // Esperamos a que la capacidad se refresque ANTES de mostrar el toast
+      await fetchCapacidad(selectedDate);
+      showToast('success', `Turno agendado — ${nuevoTurno.cliente_nombre}`);
     },
     [selectedDate, fetchCapacidad],
   );
@@ -98,7 +102,7 @@ const App: React.FC = () => {
     async (id: number, estado: TurnoEstado) => {
       const actualizado = await api.updateTurnoEstado(id, estado);
       setTurnos((prev) => prev.map((t) => (t.id === id ? actualizado : t)));
-      fetchCapacidad(selectedDate);
+      await fetchCapacidad(selectedDate);
       const label = estado === 'completed' ? 'completado' : 'cancelado';
       showToast('success', `Turno ${label}`);
     },
@@ -110,7 +114,7 @@ const App: React.FC = () => {
     async (id: number) => {
       await api.deleteTurno(id);
       setTurnos((prev) => prev.filter((t) => t.id !== id));
-      fetchCapacidad(selectedDate);
+      await fetchCapacidad(selectedDate);
       showToast('success', 'Turno eliminado');
     },
     [selectedDate, fetchCapacidad],
