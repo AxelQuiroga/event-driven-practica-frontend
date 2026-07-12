@@ -41,7 +41,7 @@ export function WeekNavigation({ desde, hasta, onAnterior, onSiguiente, onHoy }:
       {/* Flecha izquierda */}
       <button
         onClick={onAnterior}
-        className="w-10 h-10 flex items-center justify-center rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-all"
+        className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-300 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-white transition-all"
         aria-label="Semana anterior"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,7 +51,7 @@ export function WeekNavigation({ desde, hasta, onAnterior, onSiguiente, onHoy }:
 
       {/* Centro: rango de fechas + botón Hoy */}
       <div className="flex items-center gap-3">
-        <h2 className="text-sm font-black uppercase tracking-widest text-zinc-300">
+        <h2 className="text-sm font-black uppercase tracking-widest text-gray-700 dark:text-zinc-300">
           {formatRange(desde, hasta)}
         </h2>
         {!esEstaSemana && (
@@ -67,7 +67,7 @@ export function WeekNavigation({ desde, hasta, onAnterior, onSiguiente, onHoy }:
       {/* Flecha derecha */}
       <button
         onClick={onSiguiente}
-        className="w-10 h-10 flex items-center justify-center rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-all"
+        className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-300 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-white transition-all"
         aria-label="Semana siguiente"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

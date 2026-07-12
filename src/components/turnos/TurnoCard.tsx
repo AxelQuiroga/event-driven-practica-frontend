@@ -25,11 +25,11 @@ export function TurnoCard({ turno, onDelete, onEstadoChange }: TurnoCardProps) {
   const estado = ESTADO_CONFIG[turno.estado];
 
   return (
-    <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-4 mb-3 transition-all hover:border-zinc-700">
+    <div className="bg-gray-100 dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 p-4 mb-3 transition-all hover:border-gray-300 dark:hover:border-zinc-700">
       {/* Fila principal: nombre + hora */}
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-black uppercase tracking-wide text-white truncate">
+          <h3 className="text-lg font-black uppercase tracking-wide text-gray-900 dark:text-white truncate">
             {turno.cliente_nombre}
           </h3>
           <div className="flex items-center gap-2 mt-1">
@@ -47,24 +47,24 @@ export function TurnoCard({ turno, onDelete, onEstadoChange }: TurnoCardProps) {
 
       {/* Servicio + precio */}
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm text-zinc-400">
+        <span className="text-sm text-gray-500 dark:text-zinc-400">
           ✂️ {turno.servicio_nombre}
         </span>
-        <span className="text-sm font-bold text-zinc-300">
+        <span className="text-sm font-bold text-gray-700 dark:text-zinc-300">
           ${turno.servicio_precio.toLocaleString('es-AR')}
         </span>
       </div>
 
       {/* Notas */}
       {turno.notas && (
-        <p className="text-xs text-zinc-500 italic mb-3 border-l-2 border-zinc-700 pl-2">
+        <p className="text-xs text-gray-400 dark:text-zinc-500 italic mb-3 border-l-2 border-gray-300 dark:border-zinc-700 pl-2">
           "{turno.notas}"
         </p>
       )}
 
       {/* Acciones — solo si está pendiente */}
       {turno.estado === 'pending' && (
-        <div className="flex gap-2 pt-3 border-t border-zinc-800">
+        <div className="flex gap-2 pt-3 border-t border-gray-200 dark:border-zinc-800">
           <button
             onClick={() => onEstadoChange(turno.id, 'completed')}
             className="flex-1 py-2.5 bg-emerald-500 text-black text-sm font-black uppercase tracking-wide rounded-lg hover:bg-emerald-400 transition-all"
@@ -73,13 +73,13 @@ export function TurnoCard({ turno, onDelete, onEstadoChange }: TurnoCardProps) {
           </button>
           <button
             onClick={() => onEstadoChange(turno.id, 'cancelled')}
-            className="flex-1 py-2.5 bg-zinc-700 text-zinc-300 text-sm font-black uppercase tracking-wide rounded-lg hover:bg-zinc-600 transition-all"
+            className="flex-1 py-2.5 bg-gray-300 dark:bg-zinc-700 text-gray-600 dark:text-zinc-300 text-sm font-black uppercase tracking-wide rounded-lg hover:bg-gray-400 dark:hover:bg-zinc-600 transition-all"
           >
             ✕ CANCELAR
           </button>
           <button
             onClick={() => onDelete(turno.id)}
-            className="w-10 flex items-center justify-center bg-zinc-800 text-zinc-500 rounded-lg hover:bg-red-500/20 hover:text-red-400 transition-all"
+            className="w-10 flex items-center justify-center bg-gray-200 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 rounded-lg hover:bg-red-500/20 hover:text-red-400 transition-all"
             aria-label="Eliminar"
           >
             🗑

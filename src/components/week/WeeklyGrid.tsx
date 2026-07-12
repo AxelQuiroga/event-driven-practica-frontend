@@ -26,7 +26,7 @@ function slotColor(ocupados: number, total: number): string {
   if (ocupados >= total) return 'bg-red-500';
   if (ocupados >= 2) return 'bg-amber-500';
   if (ocupados >= 1) return 'bg-emerald-500';
-  return 'bg-zinc-800';
+  return 'bg-zinc-800 dark:bg-zinc-700';
 }
 
 /**
@@ -77,10 +77,10 @@ export function WeeklyGrid({ data, onRefresh }: WeeklyGridProps) {
                 const hoy = esHoy(dia.fecha);
                 return (
                   <th key={dia.fecha} className="py-2 px-1 text-center">
-                    <div className={`text-[10px] font-bold uppercase tracking-widest ${hoy ? 'text-amber-500' : 'text-zinc-500'}`}>
+                    <div className={`text-[10px] font-bold uppercase tracking-widest ${hoy ? 'text-amber-500' : 'text-gray-500 dark:text-zinc-500'}`}>
                       {DIAS_CORTOS[i]}
                     </div>
-                    <div className={`text-lg font-black ${hoy ? 'text-amber-500' : 'text-zinc-300'}`}>
+                    <div className={`text-lg font-black ${hoy ? 'text-amber-500' : 'text-gray-700 dark:text-zinc-300'}`}>
                       {new Date(dia.fecha + 'T00:00:00').getDate()}
                     </div>
                   </th>
@@ -95,7 +95,7 @@ export function WeeklyGrid({ data, onRefresh }: WeeklyGridProps) {
               <tr key={slotModel.hora}>
                 {/* Hora */}
                 <td className="py-0.5 px-1 text-right">
-                  <span className="text-[10px] font-mono font-bold text-zinc-500">
+                  <span className="text-[10px] font-mono font-bold text-gray-500 dark:text-zinc-500">
                     {slotModel.hora}
                   </span>
                 </td>
@@ -119,8 +119,8 @@ export function WeeklyGrid({ data, onRefresh }: WeeklyGridProps) {
                           ${isFull
                             ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
                             : slot.ocupados > 0
-                              ? 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                              : 'bg-zinc-900 text-zinc-600 hover:bg-zinc-800'
+                              ? 'bg-gray-200 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-300 dark:hover:bg-zinc-700'
+                              : 'bg-gray-100 dark:bg-zinc-900 text-gray-400 dark:text-zinc-600 hover:bg-gray-200 dark:hover:bg-zinc-800'
                           }
                         `}
                       >
@@ -138,15 +138,15 @@ export function WeeklyGrid({ data, onRefresh }: WeeklyGridProps) {
         <div className="flex items-center gap-4 mt-3 px-2">
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded bg-emerald-500" />
-            <span className="text-[10px] text-zinc-500 font-bold">1 libre</span>
+            <span className="text-[10px] text-gray-500 dark:text-zinc-500 font-bold">1 libre</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded bg-amber-500" />
-            <span className="text-[10px] text-zinc-500 font-bold">1 libre</span>
+            <span className="text-[10px] text-gray-500 dark:text-zinc-500 font-bold">1 libre</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded bg-red-500" />
-            <span className="text-[10px] text-zinc-500 font-bold">Lleno</span>
+            <span className="text-[10px] text-gray-500 dark:text-zinc-500 font-bold">Lleno</span>
           </div>
         </div>
       </div>
@@ -164,12 +164,12 @@ export function WeeklyGrid({ data, onRefresh }: WeeklyGridProps) {
           return (
             <div
               key={dia.fecha}
-              className={`bg-zinc-900 rounded-xl border ${hoy ? 'border-amber-500/30' : 'border-zinc-800'} overflow-hidden`}
+              className={`bg-gray-100 dark:bg-zinc-900 rounded-xl border ${hoy ? 'border-amber-500/30' : 'border-gray-200 dark:border-zinc-800'} overflow-hidden`}
             >
               {/* Header del día */}
               <div className={`px-4 py-3 flex items-center justify-between ${hoy ? 'bg-amber-500/10' : ''}`}>
                 <div className="flex items-center gap-2">
-                  <span className={`text-sm font-black uppercase ${hoy ? 'text-amber-500' : 'text-white'}`}>
+                  <span className={`text-sm font-black uppercase ${hoy ? 'text-amber-500' : 'text-gray-900 dark:text-white'}`}>
                     {DIAS_LARGOS[i]}
                   </span>
                   {hoy && (
@@ -178,7 +178,7 @@ export function WeeklyGrid({ data, onRefresh }: WeeklyGridProps) {
                     </span>
                   )}
                 </div>
-                <span className="text-xs text-zinc-500 font-bold">
+                <span className="text-xs text-gray-500 dark:text-zinc-500 font-bold">
                   {new Date(dia.fecha + 'T00:00:00').getDate()} · {totalTurnos} turno{totalTurnos !== 1 ? 's' : ''}
                 </span>
               </div>
@@ -191,25 +191,25 @@ export function WeeklyGrid({ data, onRefresh }: WeeklyGridProps) {
                     <button
                       key={slot.hora}
                       onClick={() => handleCellClick(dia.fecha, slot)}
-                      className="w-full flex items-center gap-3 py-2 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-all text-left"
+                      className="w-full flex items-center gap-3 py-2 px-3 rounded-lg bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 transition-all text-left"
                     >
-                      <span className="text-xs font-mono font-bold text-zinc-400 w-12">
+                      <span className="text-xs font-mono font-bold text-gray-500 dark:text-zinc-400 w-12">
                         {slot.hora}
                       </span>
-                      <div className="flex-1 h-2 bg-zinc-700 rounded-full overflow-hidden">
+                      <div className="flex-1 h-2 bg-gray-300 dark:bg-zinc-700 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full ${slotColor(slot.ocupados, slot.total)}`}
                           style={{ width: `${(slot.ocupados / slot.total) * 100}%` }}
                         />
                       </div>
-                      <span className="text-[10px] font-bold text-zinc-400 w-12 text-right">
+                      <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 w-12 text-right">
                         {slot.ocupados}/{slot.total}
                       </span>
                     </button>
                   ))}
 
                 {dia.slots.every((s) => s.ocupados === 0) && (
-                  <p className="text-xs text-zinc-600 py-2 text-center">Sin turnos</p>
+                  <p className="text-xs text-gray-400 dark:text-zinc-600 py-2 text-center">Sin turnos</p>
                 )}
               </div>
             </div>

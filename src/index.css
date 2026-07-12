@@ -12,9 +12,9 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Estilos base — dark mode por defecto (barbershop) */
+/* Estilos base — light por defecto, dark mode con .dark en <html> */
 body {
-  @apply bg-black text-white;
+  @apply bg-gray-50 text-gray-900 dark:bg-black dark:text-white;
 }
 
 /* Scrollbar styling */

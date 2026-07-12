@@ -9,7 +9,7 @@ const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('dia');
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       <Header viewMode={viewMode} onViewModeChange={setViewMode} />
 
       <main className="max-w-5xl mx-auto px-4 py-6">

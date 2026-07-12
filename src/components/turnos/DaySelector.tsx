@@ -33,7 +33,7 @@ export function DaySelector({ selectedDate, onDateChange }: DaySelectorProps) {
         className={`px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wide transition-all ${
           selectedDate === today
             ? 'bg-amber-500 text-black'
-            : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            : 'bg-gray-200 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-300 dark:hover:bg-zinc-700'
         }`}
       >
         Hoy
@@ -43,7 +43,7 @@ export function DaySelector({ selectedDate, onDateChange }: DaySelectorProps) {
         className={`px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wide transition-all ${
           selectedDate === tomorrow
             ? 'bg-amber-500 text-black'
-            : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            : 'bg-gray-200 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-300 dark:hover:bg-zinc-700'
         }`}
       >
         Mañana
@@ -54,11 +54,11 @@ export function DaySelector({ selectedDate, onDateChange }: DaySelectorProps) {
           value={selectedDate}
           onChange={(e) => onDateChange(e.target.value)}
           min={today}
-          className="px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wide bg-zinc-800 text-zinc-300 border border-zinc-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 cursor-pointer"
+          className="px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wide bg-gray-200 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-300 dark:border-zinc-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 cursor-pointer"
         />
       </div>
       {selectedDate !== today && selectedDate !== tomorrow && (
-        <span className="text-sm text-zinc-500 ml-1">
+        <span className="text-sm text-gray-500 dark:text-zinc-500 ml-1">
           {formatDateLabel(selectedDate)}
         </span>
       )}

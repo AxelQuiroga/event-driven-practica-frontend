@@ -138,7 +138,7 @@ export function DayView() {
 
       {/* Turnos del día */}
       <div>
-        <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500 mb-3">
           Turnos del día ({turnos.length})
         </h3>
 
@@ -147,7 +147,7 @@ export function DayView() {
         ) : isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-28 bg-zinc-900 rounded-xl animate-pulse border border-zinc-800" />
+              <div key={i} className="h-28 bg-gray-200 dark:bg-zinc-900 rounded-xl animate-pulse border border-gray-200 dark:border-zinc-800" />
             ))}
           </div>
         ) : turnos.length === 0 ? (

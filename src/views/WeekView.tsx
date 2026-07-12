@@ -117,7 +117,7 @@ export function WeekView() {
         /* Skeleton de grilla */
         <div className="space-y-2">
           {Array.from({ length: 7 }).map((_, i) => (
-            <div key={i} className="h-12 bg-zinc-900 rounded-lg animate-pulse border border-zinc-800" />
+            <div key={i} className="h-12 bg-gray-200 dark:bg-zinc-900 rounded-lg animate-pulse border border-gray-200 dark:border-zinc-800" />
           ))}
         </div>
       ) : data ? (

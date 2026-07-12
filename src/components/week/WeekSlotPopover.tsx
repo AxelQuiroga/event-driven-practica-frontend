@@ -140,12 +140,12 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
       {/* Popover */}
       <div
         ref={popoverRef}
-        className="relative w-full max-w-md bg-zinc-900 rounded-t-2xl sm:rounded-2xl border border-zinc-700 p-5 animate-slide-up max-h-[85vh] overflow-y-auto"
+        className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-t-2xl sm:rounded-2xl border border-gray-200 dark:border-zinc-700 p-5 animate-slide-up max-h-[85vh] overflow-y-auto"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-base font-black uppercase tracking-wide text-white">
+            <h3 className="text-base font-black uppercase tracking-wide text-gray-900 dark:text-white">
               {formatFecha(fecha)}
             </h3>
             <p className="text-sm text-amber-500 font-bold">
@@ -154,7 +154,7 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors"
           >
             ✕
           </button>
@@ -166,27 +166,27 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
             {turnos.map((turno) => {
               const estado = ESTADO_CONFIG[turno.estado];
               return (
-                <div key={turno.id} className="bg-zinc-800 rounded-lg p-3 border border-zinc-700">
+                <div key={turno.id} className="bg-gray-100 dark:bg-zinc-800 rounded-lg p-3 border border-gray-200 dark:border-zinc-700">
                   <div className="flex items-start justify-between mb-1">
                     <div>
-                      <span className="text-sm font-black text-white">{turno.cliente_nombre}</span>
+                      <span className="text-sm font-black text-gray-900 dark:text-white">{turno.cliente_nombre}</span>
                       <span className={`ml-2 text-[10px] font-bold uppercase ${estado.className}`}>
                         {estado.label}
                       </span>
                     </div>
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-gray-500 dark:text-zinc-400">
                     ✂️ {turno.servicio_nombre} · ${turno.servicio_precio?.toLocaleString('es-AR')}
                   </p>
                   {turno.notas && (
-                    <p className="text-xs text-zinc-500 italic mt-1 border-l-2 border-zinc-600 pl-2">
+                    <p className="text-xs text-gray-400 dark:text-zinc-500 italic mt-1 border-l-2 border-gray-300 dark:border-zinc-600 pl-2">
                       "{turno.notas}"
                     </p>
                   )}
 
                   {/* Acciones — solo para pending */}
                   {turno.estado === 'pending' && (
-                    <div className="flex gap-2 mt-2 pt-2 border-t border-zinc-700">
+                    <div className="flex gap-2 mt-2 pt-2 border-t border-gray-200 dark:border-zinc-700">
                       <button
                         onClick={() => handleEstadoChange(turno, 'completed')}
                         className="flex-1 py-1.5 bg-emerald-500 text-black text-[10px] font-black uppercase rounded-md hover:bg-emerald-400 transition-all"
@@ -195,13 +195,13 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
                       </button>
                       <button
                         onClick={() => handleEstadoChange(turno, 'cancelled')}
-                        className="flex-1 py-1.5 bg-zinc-700 text-zinc-300 text-[10px] font-black uppercase rounded-md hover:bg-zinc-600 transition-all"
+                        className="flex-1 py-1.5 bg-gray-300 dark:bg-zinc-700 text-gray-600 dark:text-zinc-300 text-[10px] font-black uppercase rounded-md hover:bg-gray-400 dark:hover:bg-zinc-600 transition-all"
                       >
                         ✕ CANCELAR
                       </button>
                       <button
                         onClick={() => handleDelete(turno)}
-                        className="w-8 flex items-center justify-center bg-zinc-700 text-zinc-400 rounded-md hover:bg-red-500/20 hover:text-red-400 transition-all text-xs"
+                        className="w-8 flex items-center justify-center bg-gray-300 dark:bg-zinc-700 text-gray-500 dark:text-zinc-400 rounded-md hover:bg-red-500/20 hover:text-red-400 transition-all text-xs"
                         aria-label="Eliminar"
                       >
                         🗑
@@ -224,54 +224,54 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
               + Agendar en este horario
             </button>
           ) : (
-            <p className="text-center text-xs text-zinc-500 font-bold py-2">
+            <p className="text-center text-xs text-gray-400 dark:text-zinc-500 font-bold py-2">
               No hay disponibilidad en este horario
             </p>
           )
         ) : (
-          <div className="border-t border-zinc-700 pt-4 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500">
+          <div className="border-t border-gray-200 dark:border-zinc-700 pt-4 space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500">
               Nuevo turno — {hora} hs
             </h4>
 
             {/* Cliente */}
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1 block">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500 mb-1 block">
                 Cliente
               </label>
               {selectedCliente ? (
-                <div className="flex items-center gap-2 p-2 bg-zinc-800 rounded-lg border border-amber-500/30">
-                  <span className="flex-1 text-sm text-white font-bold">
+                <div className="flex items-center gap-2 p-2 bg-gray-100 dark:bg-zinc-800 rounded-lg border border-amber-500/30">
+                  <span className="flex-1 text-sm text-gray-900 dark:text-white font-bold">
                     {selectedCliente.nombre}
-                    {selectedCliente.telefono && <span className="text-xs font-normal text-zinc-400 ml-2">{selectedCliente.telefono}</span>}
+                    {selectedCliente.telefono && <span className="text-xs font-normal text-gray-500 dark:text-zinc-400 ml-2">{selectedCliente.telefono}</span>}
                   </span>
                   <button onClick={() => { setSelectedCliente(null); setClienteSearch(''); }} className="text-xs text-amber-500">
                     Cambiar
                   </button>
                 </div>
               ) : showNewCliente ? (
-                <div className="space-y-2 p-3 bg-zinc-800 rounded-lg">
-                  <button onClick={() => { setShowNewCliente(false); setNewNombre(''); setNewTelefono(''); }} className="text-[10px] text-zinc-500 hover:text-zinc-300">
+                <div className="space-y-2 p-3 bg-gray-100 dark:bg-zinc-800 rounded-lg">
+                  <button onClick={() => { setShowNewCliente(false); setNewNombre(''); setNewTelefono(''); }} className="text-[10px] text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300">
                     ← Volver a buscar
                   </button>
                   <input type="text" value={newNombre} onChange={(e) => setNewNombre(e.target.value)} placeholder="Nombre *"
-                    className="w-full px-3 py-1.5 bg-zinc-700 border border-zinc-600 rounded-lg text-white text-xs placeholder-zinc-500 focus:ring-2 focus:ring-amber-500" />
+                    className="w-full px-3 py-1.5 bg-gray-200 dark:bg-zinc-700 border border-gray-300 dark:border-zinc-600 rounded-lg text-gray-900 dark:text-white text-xs placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-amber-500" />
                   <input type="tel" value={newTelefono} onChange={(e) => setNewTelefono(e.target.value)} placeholder="Teléfono (opcional)"
-                    className="w-full px-3 py-1.5 bg-zinc-700 border border-zinc-600 rounded-lg text-white text-xs placeholder-zinc-500 focus:ring-2 focus:ring-amber-500" />
+                    className="w-full px-3 py-1.5 bg-gray-200 dark:bg-zinc-700 border border-gray-300 dark:border-zinc-600 rounded-lg text-gray-900 dark:text-white text-xs placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-amber-500" />
                 </div>
               ) : (
                 <div>
                   <input type="text" value={clienteSearch} onChange={(e) => setClienteSearch(e.target.value)}
                     placeholder="Buscar por nombre..."
-                    className="w-full px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-xs placeholder-zinc-500 focus:ring-2 focus:ring-amber-500" />
+                    className="w-full px-3 py-1.5 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white text-xs placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-amber-500" />
                   {clientes.length > 0 && (
-                    <ul className="mt-1 bg-zinc-800 border border-zinc-700 rounded-lg max-h-24 overflow-y-auto">
+                    <ul className="mt-1 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg max-h-24 overflow-y-auto">
                       {clientes.map((c) => (
                         <li key={c.id}>
                           <button onClick={() => { setSelectedCliente(c); setClienteSearch(''); setClientes([]); }}
-                            className="w-full text-left px-3 py-1.5 hover:bg-zinc-700 text-xs text-white">
+                            className="w-full text-left px-3 py-1.5 hover:bg-gray-200 dark:hover:bg-zinc-700 text-xs text-gray-900 dark:text-white">
                             {c.nombre}
-                            {c.telefono && <span className="text-zinc-500 ml-2">{c.telefono}</span>}
+                            {c.telefono && <span className="text-gray-400 dark:text-zinc-500 ml-2">{c.telefono}</span>}
                           </button>
                         </li>
                       ))}
@@ -287,7 +287,7 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
 
             {/* Servicio */}
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1 block">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500 mb-1 block">
                 Servicio
               </label>
               <div className="grid grid-cols-2 gap-1.5">
@@ -298,7 +298,7 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
                     className={`p-2 rounded-lg text-center transition-all border ${
                       servicioId === s.id
                         ? 'bg-amber-500 text-black border-amber-500'
-                        : 'bg-zinc-800 text-zinc-300 border-zinc-700 hover:border-zinc-500'
+                        : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 border-gray-200 dark:border-zinc-700 hover:border-gray-400 dark:hover:border-zinc-500'
                     }`}
                   >
                     <span className="block text-[10px] font-bold uppercase">{s.nombre}</span>
@@ -312,7 +312,7 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
             {/* Notas */}
             <input type="text" value={notas} onChange={(e) => setNotas(e.target.value)}
               placeholder="Notas (opcional)"
-              className="w-full px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-xs placeholder-zinc-500 focus:ring-2 focus:ring-amber-500" />
+              className="w-full px-3 py-1.5 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white text-xs placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-amber-500" />
 
             {/* Error general */}
             {errors.submit && <p className="text-[10px] text-red-400 text-center">{errors.submit}</p>}
@@ -320,7 +320,7 @@ export function WeekSlotPopover({ fecha, hora, turnos, slot, onClose, onRefresh 
             {/* Botones */}
             <div className="flex gap-2">
               <button onClick={() => { setShowForm(false); setErrors({}); }}
-                className="flex-1 py-2 bg-zinc-800 text-zinc-400 text-xs font-bold uppercase rounded-lg hover:bg-zinc-700 transition-all">
+                className="flex-1 py-2 bg-gray-200 dark:bg-zinc-800 text-gray-600 dark:text-zinc-400 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 dark:hover:bg-zinc-700 transition-all">
                 Cancelar
               </button>
               <button onClick={handleCreate} disabled={isSubmitting}

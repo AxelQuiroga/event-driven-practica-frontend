@@ -131,11 +131,11 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg bg-zinc-900 rounded-t-2xl sm:rounded-2xl border border-zinc-700 p-6 animate-slide-up">
+      <div className="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-t-2xl sm:rounded-2xl border border-gray-200 dark:border-zinc-700 p-6 animate-slide-up">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h2 className="text-lg font-black uppercase tracking-wide text-white">
+            <h2 className="text-lg font-black uppercase tracking-wide text-gray-900 dark:text-white">
               Agendar
             </h2>
             <p className="text-sm text-amber-500 font-bold">
@@ -144,7 +144,7 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors"
           >
             ✕
           </button>
@@ -152,16 +152,16 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
 
         {/* Cliente */}
         <div className="mb-4">
-          <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2 block">
+          <label className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500 mb-2 block">
             Cliente
           </label>
 
           {selectedCliente ? (
-            <div className="flex items-center gap-2 p-3 bg-zinc-800 rounded-lg border border-amber-500/30">
-              <span className="flex-1 text-white font-bold">
+            <div className="flex items-center gap-2 p-3 bg-gray-100 dark:bg-zinc-800 rounded-lg border border-amber-500/30">
+              <span className="flex-1 text-gray-900 dark:text-white font-bold">
                 {selectedCliente.nombre}
                 {selectedCliente.telefono && (
-                  <span className="text-sm font-normal text-zinc-400 ml-2">{selectedCliente.telefono}</span>
+                  <span className="text-sm font-normal text-gray-500 dark:text-zinc-400 ml-2">{selectedCliente.telefono}</span>
                 )}
               </span>
               <button
@@ -172,10 +172,10 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
               </button>
             </div>
           ) : showNewCliente ? (
-            <div className="space-y-2 p-3 bg-zinc-800 rounded-lg">
+            <div className="space-y-2 p-3 bg-gray-100 dark:bg-zinc-800 rounded-lg">
               <button
                 onClick={() => { setShowNewCliente(false); setNewNombre(''); setNewTelefono(''); }}
-                className="text-xs text-zinc-500 hover:text-zinc-300"
+                className="text-xs text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300"
               >
                 ← Volver a buscar
               </button>
@@ -184,14 +184,14 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
                 value={newNombre}
                 onChange={(e) => setNewNombre(e.target.value)}
                 placeholder="Nombre *"
-                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white text-sm placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                className="w-full px-3 py-2 bg-gray-200 dark:bg-zinc-700 border border-gray-300 dark:border-zinc-600 rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               />
               <input
                 type="tel"
                 value={newTelefono}
                 onChange={(e) => setNewTelefono(e.target.value)}
                 placeholder="Teléfono (opcional)"
-                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white text-sm placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                className="w-full px-3 py-2 bg-gray-200 dark:bg-zinc-700 border border-gray-300 dark:border-zinc-600 rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               />
             </div>
           ) : (
@@ -205,10 +205,10 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
                   if (errors.cliente) setErrors((prev) => ({ ...prev, cliente: '' }));
                 }}
                 placeholder="Buscar por nombre o teléfono..."
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                className="w-full px-3 py-2 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               />
               {clientes.length > 0 && (
-                <ul className="mt-1 bg-zinc-800 border border-zinc-700 rounded-lg max-h-32 overflow-y-auto">
+                <ul className="mt-1 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg max-h-32 overflow-y-auto">
                   {clientes.map((c) => (
                     <li key={c.id}>
                       <button
@@ -218,10 +218,10 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
                           setClientes([]);
                           if (errors.cliente) setErrors((prev) => ({ ...prev, cliente: '' }));
                         }}
-                        className="w-full text-left px-3 py-2 hover:bg-zinc-700 text-sm text-white"
+                        className="w-full text-left px-3 py-2 hover:bg-gray-200 dark:hover:bg-zinc-700 text-sm text-gray-900 dark:text-white"
                       >
                         {c.nombre}
-                        {c.telefono && <span className="text-zinc-500 ml-2">{c.telefono}</span>}
+                        {c.telefono && <span className="text-gray-400 dark:text-zinc-500 ml-2">{c.telefono}</span>}
                       </button>
                     </li>
                   ))}
@@ -240,7 +240,7 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
 
         {/* Servicio — BOTONES */}
         <div className="mb-4">
-          <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2 block">
+          <label className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500 mb-2 block">
             Servicio
           </label>
           <div className="grid grid-cols-3 gap-2">
@@ -254,7 +254,7 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
                 className={`p-3 rounded-lg text-center transition-all border-2 ${
                   servicioId === s.id
                     ? 'bg-amber-500 text-black border-amber-500'
-                    : 'bg-zinc-800 text-zinc-300 border-zinc-700 hover:border-zinc-500'
+                    : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 border-gray-200 dark:border-zinc-700 hover:border-gray-400 dark:hover:border-zinc-500'
                 }`}
               >
                 <span className="block text-xs font-bold uppercase">{s.nombre}</span>
@@ -272,7 +272,7 @@ export function QuickTurnoForm({ hora, fecha, isOpen, onClose, onSubmit }: Quick
             value={notas}
             onChange={(e) => setNotas(e.target.value)}
             placeholder="Notas (opcional): quiere con Maxi, pelo rizado..."
-            className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            className="w-full px-3 py-2 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           />
         </div>
 
