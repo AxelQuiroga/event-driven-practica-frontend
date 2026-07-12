@@ -69,6 +69,26 @@ export interface CapacidadSlot {
   total: number;
 }
 
+// ─── Capacidad Semanal ────────────────────────────────────
+
+export interface SlotCapacidad {
+  hora: string;
+  ocupados: number;
+  total: number;
+}
+
+export interface DiaCapacidad {
+  fecha: string;
+  turnos: Turno[];
+  slots: SlotCapacidad[];
+}
+
+export interface CapacidadSemanaResponse {
+  desde: string;
+  hasta: string;
+  dias: DiaCapacidad[];
+}
+
 const BASE_URL = '/api';
 
 class ApiService {
@@ -103,6 +123,10 @@ class ApiService {
 
   async getCapacidad(fecha: string): Promise<CapacidadSlot[]> {
     return this.request<CapacidadSlot[]>(`/turnos/capacidad?fecha=${fecha}`);
+  }
+
+  async getCapacidadSemana(desde: string): Promise<CapacidadSemanaResponse> {
+    return this.request<CapacidadSemanaResponse>(`/turnos/capacidad-semana?desde=${desde}`);
   }
 
   async getTurnoById(id: number): Promise<Turno> {
