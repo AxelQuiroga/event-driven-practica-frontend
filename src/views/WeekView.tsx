@@ -7,18 +7,22 @@ import { WeekNavigation } from '../components/week/WeekNavigation';
 import { WeeklyGrid } from '../components/week/WeeklyGrid';
 
 /**
- * Calcula el lunes de la semana para una fecha dada (YYYY-MM-DD).
- * Usa UTC para evitar bugs de timezone con toISOString().
+ * Calcula el lunes de la semana para una fecha dada.
+ * Usa tiempo LOCAL (no UTC) para que funcione correctamente
+ * en la timezone del usuario (ej: Argentina UTC-3).
  */
 function getLunesDeLaSemana(fecha: Date): string {
-  // Usar getUTC* para no perder un día en UTC-3
-  const year = fecha.getUTCFullYear();
-  const month = fecha.getUTCMonth();
-  const day = fecha.getUTCDate();
-  const dow = fecha.getUTCDay(); // 0=Dom, 1=Lun, ..., 6=Sab
-  const diff = dow === 0 ? 6 : dow - 1;
-  const d = new Date(Date.UTC(year, month, day - diff));
-  return d.toISOString().split('T')[0];
+  const year = fecha.getFullYear();
+  const month = fecha.getMonth();
+  const day = fecha.getDate();
+  const dow = fecha.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+  const diff = dow === 0 ? 6 : dow - 1; // días desde el lunes
+  const monday = new Date(year, month, day - diff);
+  // Formatear a YYYY-MM-DD sin toISOString (que usa UTC)
+  const y = monday.getFullYear();
+  const m = String(monday.getMonth() + 1).padStart(2, '0');
+  const d = String(monday.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 /**
