@@ -30,10 +30,12 @@ function slotColor(ocupados: number, total: number): string {
 }
 
 /**
- * Indica si una fecha es hoy.
+ * Indica si una fecha es hoy (usando hora local, no UTC).
  */
 function esHoy(fecha: string): boolean {
-  return fecha === new Date().toISOString().split('T')[0];
+  const d = new Date();
+  const hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return fecha === hoy;
 }
 
 export function WeeklyGrid({ data, onRefresh }: WeeklyGridProps) {

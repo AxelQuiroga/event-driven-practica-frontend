@@ -28,7 +28,8 @@ function formatRange(desde: string, hasta: string): string {
  * Indica si la semana mostrada incluye la fecha de hoy.
  */
 function semanaContieneHoy(desde: string, hasta: string): boolean {
-  const hoy = new Date().toISOString().split('T')[0];
+  const d = new Date();
+  const hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   return hoy >= desde && hoy <= hasta;
 }
 

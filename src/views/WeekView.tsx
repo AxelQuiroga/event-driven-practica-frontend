@@ -7,20 +7,27 @@ import { WeekNavigation } from '../components/week/WeekNavigation';
 import { WeeklyGrid } from '../components/week/WeeklyGrid';
 
 /**
- * Calcula el lunes de la semana para una fecha dada.
- * Si es lunes, devuelve esa fecha. Si es miércoles, retrocede 2 días.
+ * Calcula el lunes de la semana para una fecha dada (YYYY-MM-DD).
+ * Usa UTC para evitar bugs de timezone con toISOString().
  */
 function getLunesDeLaSemana(fecha: Date): string {
-  const d = new Date(fecha);
-  const day = d.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
-  const diff = day === 0 ? 6 : day - 1; // offset para que Lunes sea el inicio
-  d.setDate(d.getDate() - diff);
+  // Usar getUTC* para no perder un día en UTC-3
+  const year = fecha.getUTCFullYear();
+  const month = fecha.getUTCMonth();
+  const day = fecha.getUTCDate();
+  const dow = fecha.getUTCDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+  const diff = dow === 0 ? 6 : dow - 1;
+  const d = new Date(Date.UTC(year, month, day - diff));
   return d.toISOString().split('T')[0];
 }
 
+/**
+ * Suma N días a una fecha YYYY-MM-DD sin usar Date local.
+ * Evita el bug de timezone con toISOString().
+ */
 function addDays(fechaStr: string, days: number): string {
-  const d = new Date(fechaStr + 'T00:00:00');
-  d.setDate(d.getDate() + days);
+  const [year, month, day] = fechaStr.split('-').map(Number);
+  const d = new Date(Date.UTC(year, month - 1, day + days));
   return d.toISOString().split('T')[0];
 }
 
